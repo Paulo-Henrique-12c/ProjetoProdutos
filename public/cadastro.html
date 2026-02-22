@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastrar Produto</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <section class="card">
+        <nav class="nav">
+          <a href="/produtos.html">Produtos</a>
+          <a href="/cadastro.html" class="active">Cadastrar</a>
+        </nav>
+
+        <h1>Cadastro de produto</h1>
+        <form id="form-produto">
+          <div>
+            <label for="nome">Nome</label>
+            <input id="nome" name="nome" required />
+          </div>
+
+          <div>
+            <label for="descricao">Descrição</label>
+            <textarea id="descricao" name="descricao" rows="4"></textarea>
+          </div>
+
+          <div>
+            <label for="preco">Preço</label>
+            <input id="preco" name="preco" type="number" min="0" step="0.01" required />
+          </div>
+
+          <button type="submit">Cadastrar</button>
+          <p id="status" class="status"></p>
+        </form>
+      </section>
+    </main>
+
+    <script>
+      const form = document.getElementById('form-produto');
+      const status = document.getElementById('status');
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const dados = {
+          nome: form.nome.value,
+          descricao: form.descricao.value,
+          preco: Number(form.preco.value)
+        };
+
+        try {
+          const resposta = await fetch('/api/produtos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dados)
+          });
+
+          if (!resposta.ok) {
+            throw new Error('Falha ao salvar');
+          }
+
+          form.reset();
+          status.textContent = 'Produto cadastrado com sucesso.';
+        } catch (error) {
+          status.textContent = 'Não foi possível cadastrar o produto.';
+        }
+      });
+    </script>
+  </body>
+</html>
