@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Produtos Cadastrados</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <section class="card">
+        <nav class="nav">
+          <a href="/produtos.html" class="active">Produtos</a>
+          <a href="/cadastro.html">Cadastrar</a>
+        </nav>
+
+        <h1>Produtos cadastrados</h1>
+        <p class="muted">Lista atual de produtos salvos no banco de dados.</p>
+        <ul id="lista-produtos" class="produtos-lista"></ul>
+      </section>
+    </main>
+
+    <script>
+      async function carregarProdutos() {
+        const lista = document.getElementById('lista-produtos');
+
+        try {
+          const resposta = await fetch('/api/produtos');
+          const produtos = await resposta.json();
+
+          if (!produtos.length) {
+            lista.innerHTML = '<li class="produto-item">Nenhum produto cadastrado.</li>';
+            return;
+          }
+
+          lista.innerHTML = produtos
+            .map(
+              (produto) => `
+                <li class="produto-item">
+                  <h3>${produto.nome}</h3>
+                  <p>${produto.descricao || 'Sem descrição.'}</p>
+                  <strong>R$ ${Number(produto.preco).toFixed(2)}</strong>
+                </li>
+              `
+            )
+            .join('');
+        } catch (error) {
+          lista.innerHTML = '<li class="produto-item">Erro ao carregar produtos.</li>';
+        }
+      }
+
+      carregarProdutos();
+    </script>
+  </body>
+</html>
