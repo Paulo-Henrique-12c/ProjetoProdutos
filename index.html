@@ -1,11 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Lista de Produtos</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .produto { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+        a { text-decoration: none; background: #007BFF; color: white; padding: 10px 15px; border-radius: 5px; }
+    </style>
 </head>
 <body>
-    
+
+    <h1>Produtos Cadastrados</h1>
+    <a href="cadastro.html">Cadastrar Novo Produto</a>
+    <br><br>
+
+    <div id="lista-produtos">
+        Carregando produtos...
+    </div>
+
+    <script>
+        // Função para buscar os produtos no backend
+        async function carregarProdutos() {
+            try {
+                const resposta = await fetch('http://localhost:3000/produtos');
+                const produtos = await resposta.json();
+                
+                const divLista = document.getElementById('lista-produtos');
+                divLista.innerHTML = ''; // Limpa a div
+
+                if (produtos.length === 0) {
+                    divLista.innerHTML = '<p>Nenhum produto cadastrado ainda.</p>';
+                    return;
+                }
+
+                // Cria o HTML para cada produto
+                produtos.forEach(produto => {
+                    divLista.innerHTML += `
+                        <div class="produto">
+                            <h3>${produto.nome} - R$ ${produto.preco}</h3>
+                            <p>${produto.descricao}</p>
+                        </div>
+                    `;
+                });
+            } catch (erro) {
+                console.error('Erro ao buscar produtos:', erro);
+                document.getElementById('lista-produtos').innerHTML = 'Erro ao carregar produtos.';
+            }
+        }
+
+        // Executa a função ao abrir a página
+        carregarProdutos();
+    </script>
 </body>
 </html>
