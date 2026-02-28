@@ -23,18 +23,17 @@ db.connect((err) => {
     console.log('Conectado com sucesso ao banco remoto web_03mc!');
 });
 
-// --- Suas rotas continuam aqui embaixo ---
 
-// Rota GET
+
+
 app.get('/produtos', (req, res) => {
-    const query = 'SELECT * FROM produtos_projeto'; // Verifique se a tabela já existe com este nome
+    const query = 'SELECT * FROM produtos_projeto'; 
     db.query(query, (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(results);
     });
 });
 
-// Rota POST
 app.post('/produtos', (req, res) => {
     const { nome, preco, descricao } = req.body;
     const query = 'INSERT INTO produtos_projeto (nome, preco, descricao) VALUES (?, ?, ?)';
@@ -44,7 +43,7 @@ app.post('/produtos', (req, res) => {
     });
 });
 
-// Rota DELETE
+
 app.delete('/produtos/:id', (req, res) => {
     const { id } = req.params;
     const query = 'DELETE FROM produtos_projeto WHERE id = ?';

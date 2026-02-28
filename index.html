@@ -2,94 +2,71 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Lista de Produtos</title>
+    <title>Ver Produtos</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        .produto { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
-        a { text-decoration: none; background: #007BFF; color: white; padding: 10px 15px; border-radius: 5px; }
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            margin: 0; padding: 20px; color: #fff;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)), 
+                        url('https://tse1.mm.bing.net/th/id/OIP.xZgDfLtg17E6LwokuXuF8AHaEK?rs=1&pid=ImgDetMain&o=7&rm=3') no-repeat center center fixed; 
+            background-size: cover;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { text-align: center; text-transform: uppercase; text-shadow: 3px 3px #000; border-bottom: 4px solid #fff; padding-bottom: 10px; }
         
-        /* Estilo para o botão de apagar */
+        .nav-link { 
+            text-decoration: none; background: #fff; color: #000; padding: 12px 20px; 
+            border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 25px;
+            transition: 0.3s; border: 2px solid #fff;
+        }
+        .nav-link:hover { background: transparent; color: #fff; }
+
+        .produto { 
+            background: rgba(255, 255, 255, 0.9); color: #000; padding: 20px; 
+            border-radius: 8px; border-left: 12px solid #000; margin-bottom: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        }
+        .produto h3 { margin: 0; color: #111; font-size: 1.4em; }
+        .produto p { color: #333; margin: 10px 0; }
+        
         .btn-apagar { 
-            background: #dc3545; 
-            color: white; 
-            border: none; 
-            padding: 8px 12px; 
-            border-radius: 3px; 
-            cursor: pointer; 
-            margin-top: 10px; 
+            background: #000; color: #fff; border: 2px solid #cc0000; padding: 8px 15px; 
+            border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.3s;
         }
-        .btn-apagar:hover {
-            background: #c82333;
-        }
+        .btn-apagar:hover { background: #cc0000; }
     </style>
 </head>
 <body>
-
-    <h1>Produtos Cadastrados</h1>
-    <a href="cadastro.html">Cadastrar Novo Produto</a>
-    <br><br>
-
-    <div id="lista-produtos">
-        Carregando produtos...
+    <div class="container">
+        <h1>Ver Produtos</h1>
+        <a href="cadastro.html" class="nav-link">✚ CADASTRAR NOVO ITEM</a>
+        <div id="lista-produtos">Carregando...</div>
     </div>
 
     <script>
-        // Função para buscar os produtos no backend
         async function carregarProdutos() {
             try {
                 const resposta = await fetch('http://localhost:3000/produtos');
                 const produtos = await resposta.json();
-                
                 const divLista = document.getElementById('lista-produtos');
-                divLista.innerHTML = ''; // Limpa a div
-
-                if (produtos.length === 0) {
-                    divLista.innerHTML = '<p>Nenhum produto cadastrado ainda.</p>';
-                    return;
-                }
-
-                // Cria o HTML para cada produto (agora com o botão de apagar)
-                produtos.forEach(produto => {
+                divLista.innerHTML = ''; 
+                produtos.forEach(p => {
                     divLista.innerHTML += `
                         <div class="produto">
-                            <h3>${produto.nome} - R$ ${produto.preco}</h3>
-                            <p>${produto.descricao}</p>
-                            <button class="btn-apagar" onclick="deletarProduto(${produto.id})">Apagar</button>
-                        </div>
-                    `;
+                            <h3>⚽ ${p.nome} — R$ ${p.preco}</h3>
+                            <p>${p.descricao}</p>
+                            <button class="btn-apagar" onclick="deletarProduto(${p.id})">APAGAR</button>
+                        </div>`;
                 });
-            } catch (erro) {
-                console.error('Erro ao buscar produtos:', erro);
-                document.getElementById('lista-produtos').innerHTML = 'Erro ao carregar produtos.';
-            }
+            } catch (e) { document.getElementById('lista-produtos').innerHTML = 'Erro ao carregar.'; }
         }
 
-        // Nova função para deletar o produto
         async function deletarProduto(id) {
-            // Um pequeno confirm de segurança antes de apagar direto
-            const confirmar = confirm("Tem certeza que deseja apagar este produto?");
-            
-            if (confirmar) {
-                try {
-                    // Chama a rota DELETE do seu backend passando o ID na URL
-                    const resposta = await fetch(`http://localhost:3000/produtos/${id}`, {
-                        method: 'DELETE'
-                    });
-
-                    if (resposta.ok) {
-                        alert('Produto apagado com sucesso!');
-                        carregarProdutos(); // Atualiza a lista automaticamente na tela
-                    } else {
-                        alert('Erro ao apagar produto no banco de dados.');
-                    }
-                } catch (erro) {
-                    console.error('Erro ao deletar:', erro);
-                    alert('Erro de conexão com o servidor ao tentar apagar.');
-                }
+            if (confirm("Deseja mesmo remover este item do estoque?")) {
+                const res = await fetch(`http://localhost:3000/produtos/${id}`, { method: 'DELETE' });
+                if (res.ok) { alert('Removido! Vai Corinthians!'); carregarProdutos(); }
             }
         }
-
-        // Executa a função ao abrir a página
         carregarProdutos();
     </script>
 </body>

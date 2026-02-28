@@ -2,54 +2,60 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Cadastrar Produto</title>
+    <title>Novo Recruta - Timão</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        form { max-width: 300px; display: flex; flex-direction: column; gap: 10px; }
-        input, textarea, button { padding: 10px; border-radius: 5px; border: 1px solid #ccc; }
-        button { background: #28a745; color: white; cursor: pointer; border: none; }
-        a { display: block; margin-bottom: 20px; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; margin: 0; height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://tse1.mm.bing.net/th/id/OIP.xZgDfLtg17E6LwokuXuF8AHaEK?rs=1&pid=ImgDetMain&o=7&rm=3') no-repeat center center fixed; 
+            background-size: cover;
+        }
+        .card-cadastro {
+            background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 100%; max-width: 400px;
+            border-top: 8px solid #000;
+        }
+        h1 { color: #000; text-align: center; margin-top: 0; text-transform: uppercase; font-size: 1.5em; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        input, textarea { padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+        button { 
+            background: #000; color: #fff; padding: 12px; border: none; 
+            border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 16px;
+            transition: 0.3s;
+        }
+        button:hover { background: #333; transform: translateY(-2px); }
+        .voltar { display: block; text-align: center; margin-bottom: 15px; color: #fff; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
-
-    <a href="index.html">⬅ Voltar para a lista</a>
-    <h1>Cadastrar Produto</h1>
-
-    <form id="form-cadastro">
-        <input type="text" id="nome" placeholder="Nome do Produto" required>
-        <input type="number" step="0.01" id="preco" placeholder="Preço (ex: 10.50)" required>
-        <textarea id="descricao" placeholder="Descrição do Produto" rows="4"></textarea>
-        <button type="submit">Salvar Produto</button>
-    </form>
+    <div>
+        <a href="index.html" class="voltar">⬅ VOLTAR PARA A LISTA</a>
+        <div class="card-cadastro">
+            <h1>Cadastrar Produto</h1>
+            <form id="form-cadastro">
+                <input type="text" id="nome" placeholder="Nome do Item" required>
+                <input type="number" step="0.01" id="preco" placeholder="Preço" required>
+                <textarea id="descricao" placeholder="Descrição do Produto" rows="3"></textarea>
+                <button type="submit">SALVAR NO ESTOQUE</button>
+            </form>
+        </div>
+    </div>
 
     <script>
-        document.getElementById('form-cadastro').addEventListener('submit', async (evento) => {
-            evento.preventDefault(); // Evita que a página recarregue
-
-            // Pega os valores do formulário
-            const nome = document.getElementById('nome').value;
-            const preco = document.getElementById('preco').value;
-            const descricao = document.getElementById('descricao').value;
-
-            // Envia para o backend
-            try {
-                const resposta = await fetch('http://localhost:3000/produtos', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome, preco, descricao })
-                });
-
-                if (resposta.ok) {
-                    alert('Produto cadastrado com sucesso!');
-                    window.location.href = 'index.html'; // Redireciona para a lista
-                } else {
-                    alert('Erro ao cadastrar produto.');
-                }
-            } catch (erro) {
-                console.error('Erro:', erro);
-                alert('Erro de conexão com o servidor.');
-            }
+        document.getElementById('form-cadastro').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const dados = {
+                nome: document.getElementById('nome').value,
+                preco: document.getElementById('preco').value,
+                descricao: document.getElementById('descricao').value
+            };
+            const res = await fetch('http://localhost:3000/produtos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            });
+            if (res.ok) { alert('Produto cadastrado com sucesso!'); window.location.href = 'index.html'; }
         });
     </script>
 </body>
