@@ -7,6 +7,20 @@
         body { font-family: Arial, sans-serif; padding: 20px; }
         .produto { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
         a { text-decoration: none; background: #007BFF; color: white; padding: 10px 15px; border-radius: 5px; }
+        
+        /* Estilo para o botão de apagar */
+        .btn-apagar { 
+            background: #dc3545; 
+            color: white; 
+            border: none; 
+            padding: 8px 12px; 
+            border-radius: 3px; 
+            cursor: pointer; 
+            margin-top: 10px; 
+        }
+        .btn-apagar:hover {
+            background: #c82333;
+        }
     </style>
 </head>
 <body>
@@ -34,18 +48,44 @@
                     return;
                 }
 
-                // Cria o HTML para cada produto
+                // Cria o HTML para cada produto (agora com o botão de apagar)
                 produtos.forEach(produto => {
                     divLista.innerHTML += `
                         <div class="produto">
                             <h3>${produto.nome} - R$ ${produto.preco}</h3>
                             <p>${produto.descricao}</p>
+                            <button class="btn-apagar" onclick="deletarProduto(${produto.id})">Apagar</button>
                         </div>
                     `;
                 });
             } catch (erro) {
                 console.error('Erro ao buscar produtos:', erro);
                 document.getElementById('lista-produtos').innerHTML = 'Erro ao carregar produtos.';
+            }
+        }
+
+        // Nova função para deletar o produto
+        async function deletarProduto(id) {
+            // Um pequeno confirm de segurança antes de apagar direto
+            const confirmar = confirm("Tem certeza que deseja apagar este produto?");
+            
+            if (confirmar) {
+                try {
+                    // Chama a rota DELETE do seu backend passando o ID na URL
+                    const resposta = await fetch(`http://localhost:3000/produtos/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (resposta.ok) {
+                        alert('Produto apagado com sucesso!');
+                        carregarProdutos(); // Atualiza a lista automaticamente na tela
+                    } else {
+                        alert('Erro ao apagar produto no banco de dados.');
+                    }
+                } catch (erro) {
+                    console.error('Erro ao deletar:', erro);
+                    alert('Erro de conexão com o servidor ao tentar apagar.');
+                }
             }
         }
 
